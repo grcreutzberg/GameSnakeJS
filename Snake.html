@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Snake Game</title>
+</head>
+<body>
+
+	<canvas id="board" width="600" height="600" style="border: 1px solid black"></canvas>
+	<div style="">
+		<label>Score: </label>
+		<span id="score">0</span>
+	</div>
+	<div style="">
+		<label>Level: </label>
+		<span id="level">1</span>
+	</div>
+	<script type="text/javascript">
+		
+		window.onload = function(){
+			let board = document.getElementById('board');
+			let ctx = board.getContext("2d");
+			
+			let score = document.getElementById('score').innerHTML;
+			let level = document.getElementById('level').innerHTML;
+			
+			document.addEventListener("keydown", keyPush);
+			
+			setInterval(game, 80);
+			
+			const speed = 1;
+			
+			let speedX = 0;
+			let speedY = 0;
+			
+			let headX = 10;
+			let headY = 10;
+			
+			let lengthBlock = 30;
+			let quantityBlock = 20;
+			
+			let appleX = 15;
+			let appleY = 15;
+			
+			let trail = [];
+			let tail = 3;			
+			
+			function game(){
+				headX += speedX
+				headY += speedY;
+				if (headX <0) {
+					headX = quantityBlock-1;
+				}
+				if (headX > quantityBlock-1) {
+					headX = 0;
+				}
+				if (headY < 0) {
+					headY = quantityBlock-1;
+				}
+				if (headY > quantityBlock-1) {
+					headY = 0;
+				}
+			
+				ctx.fillStyle = "rgb(227, 227, 227)";
+				ctx.fillRect(0,0, board.width, board.height)
+				
+				ctx.fillStyle = "red";
+				ctx.fillRect(appleX*lengthBlock, appleY*lengthBlock, lengthBlock, lengthBlock);
+				
+				ctx.fillStyle = "gray";
+				for (var i = 0; i < trail.length; i++) {
+					ctx.fillRect(trail[i].x*lengthBlock, trail[i].y*lengthBlock, lengthBlock-1, lengthBlock-1);
+					if (trail[i].x == headX && trail[i].y == headY) {
+						speedX = 0;
+						speedY = 0;
+						tail = 3;
+						score = 0;
+						level = 1;						
+						document.getElementById('score').innerHTML = score;
+						document.getElementById('level').innerHTML = level;
+						//alert('Game Over');
+					}
+				}
+				
+				trail.push({x:headX,y:headY});
+				while (trail.length > tail) {
+					trail.shift();
+				}
+				
+				if (appleX == headX && appleY == headY) {
+					tail++;
+					appleX = Math.floor(Math.random()*quantityBlock);
+					appleY = Math.floor(Math.random()*quantityBlock);
+					score = parseInt(score) +10;
+					if (tail % 3 === 0) {
+						level = tail / 3;
+					}
+					document.getElementById('score').innerHTML = score;
+					document.getElementById('level').innerHTML = level;
+				}
+			}
+
+			function keyPush(event) {
+				switch (event.keyCode) {
+					case 37: //Left
+						speedX = -speed;
+						speedY = 0;
+						break;
+					case 38: //Up
+						speedX = 0;
+						speedY = -speed;
+						break;
+					case 39: //Right
+						speedX = speed;
+						speedY = 0;
+						break;
+					case 40: //Down
+						speedX = 0;
+						speedY = speed;
+						break;
+				}
+			}
+		}
+	</script>
+	<style>
+		div {
+			font-family:courier; 
+			font-size:150%;		
+		}
+	</style>
+	</body>
+</html>
